@@ -357,19 +357,47 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         </div>
 
         <div class="q">
-          <div class="qlabel">C1a. Víte, kolik práce vám AI už teď ušetří v poměru k full-time zaměstnanci?</div>
+          <div class="qlabel">C1a. Z kolika procent se AI dnes podílí na tvorbě vašeho kódu?</div>
           <div class="opts">
-            <label class="opt"><input type="radio" name="c1a" value="mene_ctvrt"><span>Méně než čtvrt úvazku</span></label>
-            <label class="opt"><input type="radio" name="c1a" value="ctvrt"><span>Cca čtvrt úvazku (0,25 FTE)</span></label>
-            <label class="opt"><input type="radio" name="c1a" value="pul"><span>Cca půl úvazku (0,5 FTE)</span></label>
-            <label class="opt"><input type="radio" name="c1a" value="cely"><span>Cca celý úvazek (1 FTE)</span></label>
-            <label class="opt"><input type="radio" name="c1a" value="vice"><span>Více než jeden celý úvazek</span></label>
-            <label class="opt"><input type="radio" name="c1a" value="pridava"><span>AI nám spíš práci přidává</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="0"><span>0 % – AI do vývoje nezapojujeme</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="do10"><span>Do 10 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="10-25"><span>10–25 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="25-50"><span>25–50 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="50-75"><span>50–75 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="75+"><span>Více než 75 %</span></label>
             <label class="opt"><input type="radio" name="c1a" value="nevime"><span>Nedokážeme odhadnout</span></label>
           </div>
-          <div class="q" id="q_c1a_pridava_wrap" style="display:none;margin-top:.75rem;padding-top:.75rem;border-top:0.5px solid var(--border)">
-            <div class="qlabel" style="font-size:13px">Kde a proč vám AI práci přidává?</div>
-            <textarea class="tinput" id="f_c1a_pridava" rows="3" placeholder="Např. nutnost kontroly výstupů, prompt engineering, onboarding týmu…"></textarea>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C1b. Nahrazuje AI u vás práci juniorních vývojářů?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="c1b" value="ne"><span>Ne – junioři dělají věci, které AI nezvládne</span></label>
+            <label class="opt"><input type="radio" name="c1b" value="castecne"><span>Částečně – AI přebírá část jejich rutinních úkolů</span></label>
+            <label class="opt"><input type="radio" name="c1b" value="vetsinou"><span>Většinou ano – senioři s AI zvládnou to, co dřív dělali junioři</span></label>
+            <label class="opt"><input type="radio" name="c1b" value="ano"><span>Ano – vědomě jsme snížili počet juniorů kvůli AI</span></label>
+            <label class="opt"><input type="radio" name="c1b" value="nevime"><span>Ještě nevíme, sledujeme to</span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C1c. Kolik juniorních vývojářů jste přijali za posledních 6 měsíců?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="c1c" value="0"><span>Žádného</span></label>
+            <label class="opt"><input type="radio" name="c1c" value="1-2"><span>1–2</span></label>
+            <label class="opt"><input type="radio" name="c1c" value="3-5"><span>3–5</span></label>
+            <label class="opt"><input type="radio" name="c1c" value="5+"><span>Více než 5</span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C1d. Vychováváte si juniory? Bojíte se, že vám za pár let budou chybět?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="c1d" value="vychováváme_nebojime"><span>Vychováváme a nebojíme se – AI je posune rychleji</span></label>
+            <label class="opt"><input type="radio" name="c1d" value="vychováváme_bojime"><span>Vychováváme, ale máme obavy – juniorů bude méně a bude to problém</span></label>
+            <label class="opt"><input type="radio" name="c1d" value="nevychováváme_ok"><span>Nevychováváme – AI mezeru zaplní</span></label>
+            <label class="opt"><input type="radio" name="c1d" value="nevychováváme_obava"><span>Nevychováváme a bojíme se, že to byl chybný krok</span></label>
+            <label class="opt"><input type="radio" name="c1d" value="nevime"><span>Ještě jsme to neřešili</span></label>
           </div>
         </div>
 
@@ -654,10 +682,6 @@ document.querySelectorAll('.opt input[type=radio], .opt input[type=checkbox]').f
       const val = document.querySelector('input[name="b3a"]:checked')?.value;
       document.getElementById('q_b3a_oddeleni_wrap').style.display = (val === 'zamestnanci' || val === 'oba') ? 'block' : 'none';
     }
-    if (this.name === 'c1a') {
-      const val = document.querySelector('input[name="c1a"]:checked')?.value;
-      document.getElementById('q_c1a_pridava_wrap').style.display = val === 'pridava' ? 'block' : 'none';
-    }
     if (this.name === 'e1') {
       const e1val = document.querySelector('input[name="e1"]:checked')?.value;
       document.getElementById('q_e1a_wrap').style.display = (e1val && e1val !== 'ne') ? 'block' : 'none';
@@ -825,7 +849,8 @@ function collect() {
     b3: checked('b3'),
     b3a: radio('b3a'), b3a_odd: checked('b3a_odd'), b3a_other: document.getElementById('b3a_other')?.value.trim()||'',
     b4: checked('b4'), b4_other: document.getElementById('b4_other').value.trim(),
-    c1: scales.c1||null, c1a: radio('c1a'), c1a_pridava: document.getElementById('f_c1a_pridava')?.value.trim()||'',
+    c1: scales.c1||null,
+    c1a: radio('c1a'), c1b: radio('c1b'), c1c: radio('c1c'), c1d: radio('c1d'),
     c2: document.getElementById('f_c2').value.trim(),
     c3: checked('c3'),
     c4_fte: document.getElementById('f_c4_fte').value.trim(),
@@ -838,7 +863,7 @@ function collect() {
 }
 
 // ── SUBMIT ────────────────────────────────────────────────────────────
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzpci5dcrnorXNOD8fE56HkRW_nGp8EOEVrdTHav4s2weyycX2-tYRmxHrOVXi-MLEDvQ/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyqo4amHivJTW2X92HvL6FqYoKOadzN7u1Wc6dZYviX4pzpkHhCd2jWsE7Sya3UDm_-8g/exec';
 
 document.getElementById('surveyForm').addEventListener('submit', function(e) {
   e.preventDefault();
