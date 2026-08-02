@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASWA · Průzkum AI 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #f4f3ee;
+  --surface: #ffffff;
+  --surface2: #eeeee8;
+  --border: #dddcd4;
+  --text: #181816;
+  --text2: #525250;
+  --text3: #96958e;
+  --accent: #141b42;
+  --accent-light: #eaebf5;
+  --accent-mid: #1e2a6b;
+  --accent-bright: #2d3d99;
+  --red: #b83232;
+  --r: 10px;
+  --rlg: 14px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+.hdr { background: var(--accent); color: #fff; height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; position: sticky; top: 0; z-index: 200; }
+.hdr-logo { font-weight: 600; font-size: 15px; letter-spacing: .04em; display: flex; align-items: center; gap: 10px; }
+.hdr-logo span { font-weight: 300; opacity: .45; font-size: 13px; border-left: 1px solid rgba(255,255,255,.2); padding-left: 10px; }
+.hdr-pill { font-size: 11px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 3px 10px; letter-spacing: .05em; color: rgba(255,255,255,.8); }
+
+.wrap { max-width: 700px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+.fcol { min-width: 0; }
+
+.hero { background: var(--accent); color: #fff; border-radius: var(--rlg); padding: 1.75rem 2rem; margin-bottom: 1.5rem; overflow: hidden; position: relative; }
+.hero::after { content: ''; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,.035); pointer-events: none; }
+.hero-eye { font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: .1em; opacity: .4; margin-bottom: .65rem; }
+.hero h1 { font-size: 23px; font-weight: 600; line-height: 1.25; margin-bottom: .65rem; }
+.hero h1 em { font-style: normal; color: #8f97d4; }
+.hero p { font-size: 13.5px; opacity: .68; line-height: 1.65; max-width: 500px; }
+.hero-meta { display: flex; gap: 1.5rem; margin-top: 1.1rem; padding-top: 1.1rem; border-top: 1px solid rgba(255,255,255,.1); flex-wrap: wrap; }
+.hero-meta-i { font-size: 12px; opacity: .52; }
+
+.prog-wrap { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--r); padding: .85rem 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+.prog-track { flex: 1; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--accent-bright); border-radius: 99px; transition: width .5s ease; width: 0%; }
+.prog-label { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; white-space: nowrap; }
+
+.sec { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--rlg); padding: 1.75rem; margin-bottom: 1.25rem; }
+.sec-id { background: var(--accent-light); border-color: rgba(20,27,66,.18); }
+.sec-id .sec-badge { background: var(--accent-mid); }
+.sec-hdr { display: flex; align-items: center; gap: 11px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 0.5px solid var(--border); }
+.sec-badge { width: 30px; height: 30px; border-radius: 7px; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'DM Mono', monospace; }
+.sec-title { font-size: 15px; font-weight: 600; }
+.sec-desc { font-size: 12px; color: var(--text3); margin-top: 1px; }
+
+.q { margin-bottom: 1.5rem; }
+.q:last-child { margin-bottom: 0; }
+.qlabel { font-size: 14px; font-weight: 500; margin-bottom: .4rem; line-height: 1.5; }
+.qnote { font-size: 12px; color: var(--text3); margin-bottom: .55rem; }
+.req { color: #c0392b; }
+
+.opts { display: flex; flex-direction: column; gap: 5px; }
+.opt { display: flex; align-items: flex-start; gap: 9px; padding: 8px 11px; border-radius: var(--r); border: 0.5px solid var(--border); cursor: pointer; transition: background .12s, border-color .12s; user-select: none; }
+.opt:hover { background: var(--accent-light); border-color: #9099c8; }
+.opt.sel { background: var(--accent-light); border-color: var(--accent-mid); }
+.opt input[type=radio], .opt input[type=checkbox] { margin-top: 3px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; }
+.opt span { font-size: 13.5px; line-height: 1.5; }
+.opt-other-text { margin-top: 6px; width: 100%; padding: 6px 9px; border: 0.5px solid var(--border); border-radius: 7px; font-size: 13px; font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--text); }
+.opt-other-text:focus { outline: none; border-color: var(--accent-mid); }
+
+.scale-btns { display: flex; gap: 5px; margin-top: .4rem; }
+.sbtn { flex: 1; padding: 9px 4px; border: 0.5px solid var(--border); border-radius: var(--r); background: var(--surface); cursor: pointer; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--text2); text-align: center; transition: background .12s, border-color .12s; }
+.sbtn:hover { background: var(--accent-light); border-color: #9099c8; color: var(--accent); }
+.sbtn.sel { background: var(--accent); border-color: var(--accent); color: #fff; }
+.scale-lbs { display: flex; justify-content: space-between; margin-top: 4px; }
+.scale-lbs span { font-size: 11px; color: var(--text3); font-style: italic; }
+
+.tinput { width: 100%; padding: 9px 11px; border: 0.5px solid var(--border); border-radius: var(--r); background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); transition: border-color .12s; resize: vertical; }
+.tinput:focus { outline: none; border-color: var(--accent-mid); box-shadow: 0 0 0 3px rgba(20,27,66,.1); }
+.tinput::placeholder { color: var(--text3); }
+.irow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .irow { grid-template-columns: 1fr; } }
+.ilabel { font-size: 12px; color: var(--text2); margin-bottom: 4px; font-weight: 500; }
+
+.captcha-box { background: var(--surface2); border: 0.5px solid var(--border); border-radius: var(--r); padding: .9rem 1.1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+.captcha-q { font-size: 14px; font-family: 'DM Mono', monospace; font-weight: 500; }
+.captcha-in { width: 65px; padding: 7px 9px; border: 0.5px solid var(--border); border-radius: 7px; font-family: 'DM Mono', monospace; font-size: 14px; text-align: center; background: var(--surface); color: var(--text); }
+.captcha-in:focus { outline: none; border-color: var(--accent-mid); }
+.captcha-hint { font-size: 12px; color: var(--text3); }
+
+.errmsg { color: var(--red); font-size: 12px; margin-top: 4px; display: none; }
+.errmsg.show { display: block; }
+
+.hp-field { display: none !important; position: absolute; left: -9999px; opacity: 0; height: 0; pointer-events: none; }
+
+.submit-area { margin-top: 1.5rem; text-align: center; }
+.sbmit { background: var(--accent); color: #fff; border: none; border-radius: var(--r); padding: 13px 36px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .15s, transform .1s; }
+.sbmit:hover { background: var(--accent-mid); transform: translateY(-1px); }
+.sbmit:active { transform: translateY(0); }
+.sbmit:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.submit-note { font-size: 12px; color: var(--text3); margin-top: .65rem; }
+
+.success { display: none; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--rlg); padding: 3rem 2rem; text-align: center; margin-bottom: 1.25rem; }
+.success.show { display: block; }
+.success-ico { width: 52px; height: 52px; background: var(--accent-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; font-size: 22px; }
+.success h2 { font-size: 20px; font-weight: 600; margin-bottom: .5rem; }
+.success p { font-size: 14px; color: var(--text2); line-height: 1.6; max-width: 380px; margin: 0 auto .6rem; }
+.export-btn { background: var(--surface2); border: 0.5px solid var(--border); border-radius: var(--r); padding: 9px 18px; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; color: var(--text2); transition: background .12s; margin-top: 1rem; }
+.export-btn:hover { background: var(--border); color: var(--text); }
+
+.rbar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 6px; }
+.rbar-lbl { font-family: 'DM Mono', monospace; color: var(--text3); width: 14px; text-align: right; flex-shrink: 0; }
+.rbar-track { flex: 1; height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.rbar-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .5s ease; }
+.rbar-cnt { color: var(--text3); width: 20px; text-align: right; font-family: 'DM Mono', monospace; }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-logo">ASWA <span>Asociace softwarových agentur</span></div>
+  <div class="hdr-pill">Průzkum AI · 2026</div>
+</header>
+
+<div class="wrap">
+
+  <!-- ═══ FORM COLUMN ═══ -->
+  <div class="fcol">
+
+    <div class="hero">
+      <div class="hero-eye">ASWA · PRŮZKUM · JARO 2026</div>
+      <h1>Jak české softwarové agentury<br>pracují s <em>umělou inteligencí?</em></h1>
+      <p>Průzkum mezi členy ASWA mapuje reálný stav adopce AI – od nasazení nástrojů po dopad na tým a produktivitu. Výsledky poslouží jako podklad pro mediální výstupy.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-i">⏱ Cca 8 minut</div>
+        <div class="hero-meta-i">🖱 Data sbíráme staromódně – klikáním</div>
+        <div class="hero-meta-i">✅ Vyplnilo: <strong id="statTotal" style="color:#fff">0</strong> firem</div>
+        <div class="hero-meta-i">⚡ Vibecoded by Claude</div>
+      </div>
+    </div>
+
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-label" id="progLabel">0 / 9 povinných</div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success" id="successScreen">
+      <div class="success-ico">✓</div>
+      <h2>Děkujeme za vyplnění!</h2>
+      <p>Vaše odpovědi byly uloženy. Grafy vpravo se aktualizovaly o vaše data.</p>
+      <p style="font-size:13px;color:var(--text3)">Výsledky průzkumu budou sdíleny s členy ASWA a použity jako podklad pro mediální výstupy.</p>
+      <button class="export-btn" onclick="exportData()" style="display:none">⬇ Exportovat všechna data jako JSON</button>
+    </div>
+
+    <form id="surveyForm" novalidate>
+
+      <!-- HONEYPOT -->
+      <div class="hp-field" aria-hidden="true">
+        <input type="text" name="website" id="hp_website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- ── IDENTITA ── -->
+      <div class="sec sec-id">
+        <div class="sec-hdr">
+          <div class="sec-badge">ID</div>
+          <div>
+            <div class="sec-title">Identifikace respondenta</div>
+            <div class="sec-desc">Slouží pro ověření dat – není zveřejněno</div>
+          </div>
+        </div>
+        <div class="q">
+          <div class="irow">
+            <div>
+              <div class="ilabel">Název firmy <span class="req">*</span></div>
+              <input class="tinput" type="text" id="f_company" placeholder="např. Applifting s.r.o." autocomplete="organization">
+              <div class="errmsg" id="err_company">Vyplňte název firmy.</div>
+            </div>
+            <div>
+              <div class="ilabel">Vaše role <span class="req">*</span></div>
+              <input class="tinput" type="text" id="f_role" placeholder="např. CEO, CTO, COO…">
+              <div class="errmsg" id="err_role">Vyplňte svoji roli.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SEKCE A ── -->
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-badge">A</div>
+          <div>
+            <div class="sec-title">Profil firmy</div>
+            <div class="sec-desc">Základní kontext pro interpretaci výsledků</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">A1. Kolik lidí ve vaší firmě aktuálně pracuje? <span class="req">*</span></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="a1" value="1-10"><span>1–10 zaměstnanců</span></label>
+            <label class="opt"><input type="radio" name="a1" value="11-30"><span>11–30 zaměstnanců</span></label>
+            <label class="opt"><input type="radio" name="a1" value="31-60"><span>31–60 zaměstnanců</span></label>
+            <label class="opt"><input type="radio" name="a1" value="61-100"><span>61–100 zaměstnanců</span></label>
+            <label class="opt"><input type="radio" name="a1" value="100+"><span>Více než 100 zaměstnanců</span></label>
+          </div>
+          <div class="errmsg" id="err_a1">Vyberte možnost.</div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">A2. Jaký je váš primární segment zákazníků?</div>
+          <div class="qnote">Lze zaškrtnout více možností.</div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="a2" value="enterprise"><span>Korporátní klienti (enterprise)</span></label>
+            <label class="opt"><input type="checkbox" name="a2" value="smb"><span>Střední podniky (SMB)</span></label>
+            <label class="opt"><input type="checkbox" name="a2" value="startupy"><span>Startupy a scaleups</span></label>
+            <label class="opt"><input type="checkbox" name="a2" value="verejny"><span>Veřejný sektor / státní správa</span></label>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SEKCE B ── -->
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-badge">B</div>
+          <div>
+            <div class="sec-title">Implementace AI ve firmě</div>
+            <div class="sec-desc">Kde a jak AI reálně používáte</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">B1. Jak byste celkově popsali současný stav využití AI ve vaší firmě? <span class="req">*</span></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="b1" value="nevyuzivame"><span>AI zatím aktivně nevyužíváme</span></label>
+            <label class="opt"><input type="radio" name="b1" value="testujeme"><span>Testujeme / pilotujeme – zatím bez systematického nasazení</span></label>
+            <label class="opt"><input type="radio" name="b1" value="castecne"><span>AI využíváme v konkrétních oblastech, ale není to plošné</span></label>
+            <label class="opt"><input type="radio" name="b1" value="vetsina"><span>AI je integrována do většiny klíčových procesů</span></label>
+            <label class="opt"><input type="radio" name="b1" value="zasadni"><span>AI je zcela zásadní součástí naší práce a produktů</span></label>
+          </div>
+          <div class="errmsg" id="err_b1">Vyberte možnost.</div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">B2. Ve kterých oblastech AI aktivně využíváte?</div>
+          <div class="qnote">Lze zaškrtnout více možností.</div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="b2" value="vyvoj"><span>Vývoj softwaru (generování, review a doplňování kódu)</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="testovani"><span>Testování a QA</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="pm"><span>Projektové řízení a plánování</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="crm"><span>Komunikace se zákazníky / prodej / CRM</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="marketing"><span>Marketing a tvorba obsahu</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="dokumentace"><span>Interní znalostní báze a dokumentace</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="finance"><span>Fakturace, finance, administrativa</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="hr"><span>Recruiting a HR</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="ux"><span>Tvorba produktových specifikací / UX research</span></label>
+            <label class="opt"><input type="checkbox" name="b2" value="jine"><span>Jiné: <input class="opt-other-text" type="text" id="b2_other" placeholder="upřesněte…" onclick="event.stopPropagation()"></span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">B3. Kdo ve firmě AI reálně používá?</div>
+          <div class="qnote">Lze zaškrtnout více možností.</div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="b3" value="vyvojari"><span>Vývojáři / programátoři</span></label>
+            <label class="opt"><input type="checkbox" name="b3" value="pm"><span>Projektoví manažeři</span></label>
+            <label class="opt"><input type="checkbox" name="b3" value="design"><span>Designéři a UX</span></label>
+            <label class="opt"><input type="checkbox" name="b3" value="obchod"><span>Obchod a marketing</span></label>
+            <label class="opt"><input type="checkbox" name="b3" value="vedeni"><span>Vedení / C-level</span></label>
+            <label class="opt"><input type="checkbox" name="b3" value="support"><span>Zákaznická podpora</span></label>
+            <label class="opt"><input type="checkbox" name="b3" value="vsichni"><span>Prakticky všichni</span></label>
+            <label class="opt"><input type="checkbox" name="b3" value="nikdo"><span>Zatím nikdo aktivně</span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">B3a. Kdo ve firmě drivuje implementaci AI?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="b3a" value="vedeni"><span>Vedení / C-level</span></label>
+            <label class="opt"><input type="radio" name="b3a" value="zamestnanci"><span>Zaměstnanci zdola</span></label>
+            <label class="opt"><input type="radio" name="b3a" value="oba"><span>Obousměrně – vedení i zaměstnanci</span></label>
+            <label class="opt"><input type="radio" name="b3a" value="nikdo"><span>Nikdo to aktivně nedrivuje</span></label>
+          </div>
+          <div class="q" id="q_b3a_oddeleni_wrap" style="display:none;margin-top:.75rem;padding-top:.75rem;border-top:0.5px solid var(--border)">
+            <div class="qlabel" style="font-size:13px">Z jakého oddělení iniciativa přichází?</div>
+            <div class="qnote">Lze zaškrtnout více možností.</div>
+            <div class="opts">
+              <label class="opt"><input type="checkbox" name="b3a_odd" value="byznysoví"><span>Byznys / obchod / produktoví manažeři</span></label>
+              <label class="opt"><input type="checkbox" name="b3a_odd" value="vyvojari"><span>Vývojáři / kódeři</span></label>
+              <label class="opt"><input type="checkbox" name="b3a_odd" value="architekti"><span>Softwaroví architekti</span></label>
+              <label class="opt"><input type="checkbox" name="b3a_odd" value="design"><span>Designéři / UX</span></label>
+              <label class="opt"><input type="checkbox" name="b3a_odd" value="jine"><span>Jiné: <input class="opt-other-text" type="text" id="b3a_other" placeholder="upřesněte…" onclick="event.stopPropagation()"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">B4. Existují oblasti, kde AI záměrně nepoužíváte? Pokud ano, proč?</div>
+          <div class="qnote">Lze zaškrtnout více možností.</div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="b4" value="neomezena"><span>Ne – AI nemáme záměrně omezenu v žádné oblasti</span></label>
+            <label class="opt"><input type="checkbox" name="b4" value="bezpecnost"><span>Ano – z důvodu bezpečnosti dat a ochrany soukromí zákazníků</span></label>
+            <label class="opt"><input type="checkbox" name="b4" value="politika"><span>Ano – z důvodu interní bezpečnostní politiky</span></label>
+            <label class="opt"><input type="checkbox" name="b4" value="ip"><span>Ano – z důvodu citlivých obchodních informací (IP, NDA)</span></label>
+            <label class="opt"><input type="checkbox" name="b4" value="kvalita"><span>Ano – z důvodu nedostatečné kvality nebo spolehlivosti výstupů</span></label>
+            <label class="opt"><input type="checkbox" name="b4" value="jine"><span>Ano – jiný důvod: <input class="opt-other-text" type="text" id="b4_other" placeholder="upřesněte…" onclick="event.stopPropagation()"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SEKCE C ── -->
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-badge">C</div>
+          <div>
+            <div class="sec-title">Produktivita a dopad na tým</div>
+            <div class="sec-desc">Klíčová část – konkrétní čísla a use cases</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C1. Do jaké míry se vám AI daří propsat do reálné produktivity? <span class="req">*</span></div>
+          <div class="qnote">1 = minimální dopad &nbsp;·&nbsp; 5 = zásadní a měřitelný přínos</div>
+          <div class="scale-btns" id="scaleC1">
+            <button type="button" class="sbtn" data-val="1" onclick="selectScale('c1',this)">1</button>
+            <button type="button" class="sbtn" data-val="2" onclick="selectScale('c1',this)">2</button>
+            <button type="button" class="sbtn" data-val="3" onclick="selectScale('c1',this)">3</button>
+            <button type="button" class="sbtn" data-val="4" onclick="selectScale('c1',this)">4</button>
+            <button type="button" class="sbtn" data-val="5" onclick="selectScale('c1',this)">5</button>
+          </div>
+          <div class="scale-lbs"><span>minimální dopad</span><span>zásadní přínos</span></div>
+          <div class="errmsg" id="err_c1">Vyberte hodnotu na škále.</div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C1a. Z kolika procent se AI dnes podílí na tvorbě vašeho kódu?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="c1a" value="0"><span>0 % – AI do vývoje nezapojujeme</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="do10"><span>Do 10 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="10-25"><span>10–25 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="25-50"><span>25–50 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="50-75"><span>50–75 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="75+"><span>Více než 75 %</span></label>
+            <label class="opt"><input type="radio" name="c1a" value="nevime"><span>Nedokážeme odhadnout</span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C1b. Nahrazuje AI u vás práci juniorních vývojářů?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="c1b" value="ne"><span>Ne – junioři dělají věci, které AI nezvládne</span></label>
+            <label class="opt"><input type="radio" name="c1b" value="castecne"><span>Částečně – AI přebírá část jejich rutinních úkolů</span></label>
+            <label class="opt"><input type="radio" name="c1b" value="vetsinou"><span>Většinou ano – senior s AI teď pracuje za sebe + půl juniora</span></label>
+            <label class="opt"><input type="radio" name="c1b" value="ano"><span>Ano – díky AI jsme vědomě snížili počet juniorů</span></label>
+            <label class="opt"><input type="radio" name="c1b" value="nevime"><span>Ještě nevíme, sledujeme to</span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C1c. Kolik juniorních vývojářů jste přijali za posledních 6 měsíců?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="c1c" value="0"><span>Žádného</span></label>
+            <label class="opt"><input type="radio" name="c1c" value="1-2"><span>1–2</span></label>
+            <label class="opt"><input type="radio" name="c1c" value="3-5"><span>3–5</span></label>
+            <label class="opt"><input type="radio" name="c1c" value="5+"><span>Více než 5</span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C1d. Vychováváte si juniory? Bojíte se, že vám za pár let budou chybět?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="c1d" value="vychováváme_nebojime"><span>Vychováváme a nebojíme se – AI je posune rychleji</span></label>
+            <label class="opt"><input type="radio" name="c1d" value="vychováváme_bojime"><span>Vychováváme, ale máme obavy – juniorů bude méně a bude to problém</span></label>
+            <label class="opt"><input type="radio" name="c1d" value="nevychováváme_ok"><span>Nevychováváme – AI mezeru zaplní</span></label>
+            <label class="opt"><input type="radio" name="c1d" value="nevychováváme_obava"><span>Nevychováváme – a bojíme se, že za pár let nebudeme mít, kde brát seniory</span></label>
+            <label class="opt"><input type="radio" name="c1d" value="nevime"><span>Ještě jsme to neřešili</span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C2. Kde konkrétně AI nejvíce šetří čas nebo peníze?</div>
+          <div class="qnote">Popište nejsilnější use case – co se dělalo ručně a nyní to AI řeší nebo výrazně zrychluje.</div>
+          <textarea class="tinput" id="f_c2" rows="4" placeholder="Např. generování boilerplate kódu, psaní testů, překlad dokumentace…"></textarea>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">C3. Dokázali jste díky AI snížit počet externích dodavatelů nebo interních kapacit? <span class="req">*</span></div>
+          <div class="qnote">Lze zaškrtnout více možností.</div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="c3" value="ne"><span>Ne – AI zatím neovlivnila naše personální rozhodování</span></label>
+            <label class="opt"><input type="checkbox" name="c3" value="externisti"><span>Ano – nepotřebujeme tolik externistů / freelancerů</span></label>
+            <label class="opt"><input type="checkbox" name="c3" value="vic_prace"><span>Ano – zvládli jsme se stejným týmem více práce (bez náboru)</span></label>
+            <label class="opt"><input type="checkbox" name="c3" value="nenabor"><span>Ano – explicitně jsme se rozhodli nenabírat na konkrétní pozice</span></label>
+            <label class="opt"><input type="checkbox" name="c3" value="propusteni"><span>Ano – propustili jsme konkrétní lidi (viz C4 níže)</span></label>
+          </div>
+          <div class="errmsg" id="err_c3">Vyberte alespoň jednu možnost.</div>
+        </div>
+
+        <div class="q" id="q_c4_wrap" style="display:none">
+          <div class="qlabel">C4. Pokud jste propustili zaměstnance nebo se rozhodli nenabírat díky AI:</div>
+          <div class="qnote">Vyplňte pokud je relevantní.</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:.3rem">
+            <div>
+              <div class="ilabel">Přibližný počet FTE</div>
+              <input class="tinput" type="text" id="f_c4_fte" placeholder="např. 2 FTE">
+            </div>
+            <div>
+              <div class="ilabel">Jaká role / oblast práce</div>
+              <input class="tinput" type="text" id="f_c4_role" placeholder="např. junior vývojáři, copywriteři…">
+            </div>
+            <div>
+              <div class="ilabel">Co konkrétně AI nahradila</div>
+              <textarea class="tinput" id="f_c4_desc" rows="3" placeholder="Stručný popis use case…"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SEKCE D ── -->
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-badge">D</div>
+          <div>
+            <div class="sec-title">Bezpečnost, pravidla a limity</div>
+            <div class="sec-desc">Jak AI řídíte a kde vidíte rizika</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">D1. Máte ve firmě formální pravidla nebo politiku pro používání AI? <span class="req">*</span></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="d1" value="zadna"><span>Ne – žádná formální pravidla nemáme</span></label>
+            <label class="opt"><input type="radio" name="d1" value="interni"><span>Ano – máme interní guidelines / code of conduct pro AI</span></label>
+            <label class="opt"><input type="radio" name="d1" value="smluvni"><span>Ano – máme AI politiku dohodnutou se zákazníky / ve smlouvách</span></label>
+            <label class="opt"><input type="radio" name="d1" value="pripravujeme"><span>Připravujeme – pravidla teprve tvoříme</span></label>
+          </div>
+          <div class="errmsg" id="err_d1">Vyberte možnost.</div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">D2. Jak přistupujete k bezpečnosti dat při práci s AI nástroji?</div>
+          <div class="qnote">Lze zaškrtnout více možností.</div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="d2" value="no_citliva"><span>Neposíláme do AI nástrojů žádná citlivá data zákazníků</span></label>
+            <label class="opt"><input type="checkbox" name="d2" value="onprem"><span>Používáme výhradně on-premise nebo privátní modely</span></label>
+            <label class="opt"><input type="checkbox" name="d2" value="smluvni"><span>Máme smluvně ošetřeno, které AI nástroje smíme používat</span></label>
+            <label class="opt"><input type="checkbox" name="d2" value="gdpr"><span>Spoléháme na bezpečnostní záruky poskytovatelů (GDPR, enterprise tier)</span></label>
+            <label class="opt"><input type="checkbox" name="d2" value="neresime"><span>Toto téma zatím systematicky neřešíme</span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">D3. Kde vidíte největší limity nebo rizika AI pro váš typ práce?</div>
+          <div class="qnote">Lze zaškrtnout více možností.</div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="d3" value="kvalita"><span>Kvalita a spolehlivost výstupů (hallucinations, chyby)</span></label>
+            <label class="opt"><input type="checkbox" name="d3" value="bezpecnost"><span>Bezpečnost a únik dat</span></label>
+            <label class="opt"><input type="checkbox" name="d3" value="lockin"><span>Závislost na externím poskytovateli (vendor lock-in)</span></label>
+            <label class="opt"><input type="checkbox" name="d3" value="odpovednost"><span>Odpovědnost za výstupy vůči zákazníkovi</span></label>
+            <label class="opt"><input type="checkbox" name="d3" value="ip"><span>Právní nevyjasněnost (IP, autorská práva)</span></label>
+            <label class="opt"><input type="checkbox" name="d3" value="odpor"><span>Odpor nebo nedostatek adaptace u části týmu</span></label>
+            <label class="opt"><input type="checkbox" name="d3" value="zadne"><span>Zatím žádné zásadní limity nepozorujeme</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SEKCE E ── -->
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-badge">E</div>
+          <div>
+            <div class="sec-title">Výhled</div>
+            <div class="sec-desc">Plány a predikce na příštích 12–36 měsíců</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">E1. Plánujete v příštích 12 měsících investovat do AI? <span class="req">*</span></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="e1" value="ne"><span>Ne – investice do AI neplánujeme</span></label>
+            <label class="opt"><input type="radio" name="e1" value="mala"><span>Ano – menší investice (do 200 tis. Kč / rok)</span></label>
+            <label class="opt"><input type="radio" name="e1" value="stredni"><span>Ano – středně velká (200 tis. – 1 mil. Kč / rok)</span></label>
+            <label class="opt"><input type="radio" name="e1" value="velka"><span>Ano – větší investice (nad 1 mil. Kč / rok)</span></label>
+            <label class="opt"><input type="radio" name="e1" value="nevime"><span>Ještě nevíme / teprve rozhodujeme</span></label>
+          </div>
+          <div class="errmsg" id="err_e1">Vyberte možnost.</div>
+        </div>
+
+        <div class="q" id="q_e1a_wrap" style="display:none">
+          <div class="qlabel">E1a. Do čeho konkrétně investice poputuje?</div>
+          <div class="qnote">Lze zaškrtnout více možností.</div>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="e1a" value="skoleni"><span>Školení a vzdělávání stávajících zaměstnanců</span></label>
+            <label class="opt"><input type="checkbox" name="e1a" value="nabor"><span>Nábor AI specialistů / prompt engineerů</span></label>
+            <label class="opt"><input type="checkbox" name="e1a" value="software"><span>Software, AI nástroje a licence (Copilot, Claude, Cursor apod.)</span></label>
+            <label class="opt"><input type="checkbox" name="e1a" value="hardware"><span>Hardware a infrastruktura (GPU, on-premise řešení)</span></label>
+            <label class="opt"><input type="checkbox" name="e1a" value="vlastni"><span>Vývoj vlastních AI řešení nebo fine-tuning modelů</span></label>
+            <label class="opt"><input type="checkbox" name="e1a" value="konzultace"><span>Externí konzultace a AI strategie</span></label>
+            <label class="opt"><input type="checkbox" name="e1a" value="jine"><span>Jiné: <input class="opt-other-text" type="text" id="e1a_other" placeholder="upřesněte…" onclick="event.stopPropagation()"></span></label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">E2. Myslíte si, že AI v příštích 3 letech sníží počet lidí, které vaše firma bude potřebovat? <span class="req">*</span></div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="e2" value="ne"><span>Ne – AI práci zefektivní, ale lidi nepropustíme</span></label>
+            <label class="opt"><input type="radio" name="e2" value="spise_ne"><span>Spíše ne – lidé jsou pro nás klíčová hodnota</span></label>
+            <label class="opt"><input type="radio" name="e2" value="mozna"><span>Možná – záleží na tom, jak se technologie vyvine</span></label>
+            <label class="opt"><input type="radio" name="e2" value="pravdepodobne"><span>Pravděpodobně ano – u konkrétních rolí</span></label>
+            <label class="opt"><input type="radio" name="e2" value="urcite"><span>Určitě ano – AI bude systematicky nahrazovat lidi</span></label>
+          </div>
+          <div class="errmsg" id="err_e2">Vyberte možnost.</div>
+        </div>
+
+        <div class="q">
+          <div class="qlabel">E3. Co je pro vás jako CEO v tématu AI v roce 2026 nejdůležitější?</div>
+          <div class="qnote">Volná odpověď – klíčové myšlenky, výzvy nebo příležitosti.</div>
+          <textarea class="tinput" id="f_e3" rows="4" placeholder="Váš pohled…"></textarea>
+        </div>
+      </div>
+
+      <!-- ── ODESLÁNÍ ── -->
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-badge">✓</div>
+          <div>
+            <div class="sec-title">Odeslání formuláře</div>
+            <div class="sec-desc">Ověření a potvrzení</div>
+          </div>
+        </div>
+
+        <div class="captcha-box">
+          <div class="captcha-q" id="captchaQ">Kolik je 3 + 5?</div>
+          <input class="captcha-in" type="text" id="captchaIn" placeholder="?" maxlength="3" autocomplete="off" inputmode="numeric">
+          <div class="captcha-hint">Ověření, že jste člověk 🙂</div>
+        </div>
+        <div class="errmsg" id="err_captcha">Špatná odpověď – zkuste to znovu.</div>
+
+        <div class="submit-area">
+          <button type="submit" class="sbmit" id="submitBtn">Odeslat průzkum →</button>
+          <div class="submit-note">Data jsou ukládána bezpečně a použita výhradně pro účely průzkumu ASWA.</div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'aswa_survey_2026';
+
+// ── CAPTCHA ──────────────────────────────────────────────────────────
+let captchaAns = 0;
+function genCaptcha() {
+  const pool = [
+    [3,5,'+',(a,b)=>a+b],[7,4,'+',(a,b)=>a+b],[9,3,'-',(a,b)=>a-b],
+    [4,8,'+',(a,b)=>a+b],[11,4,'-',(a,b)=>a-b],[5,3,'×',(a,b)=>a*b],
+    [6,2,'×',(a,b)=>a*b],[8,6,'+',(a,b)=>a+b],[13,5,'-',(a,b)=>a-b],
+  ];
+  const p = pool[Math.floor(Math.random()*pool.length)];
+  captchaAns = p[3](p[0],p[1]);
+  document.getElementById('captchaQ').textContent = `Kolik je ${p[0]} ${p[2]} ${p[1]}?`;
+  document.getElementById('captchaIn').value = '';
+}
+genCaptcha();
+
+// ── RATE LIMIT ────────────────────────────────────────────────────────
+function checkRate() {
+  const k = 'aswa_last', last = parseInt(localStorage.getItem(k)||'0'), now = Date.now();
+  if (now - last < 30000) return false;
+  localStorage.setItem(k, now);
+  return true;
+}
+
+// ── SCALE ─────────────────────────────────────────────────────────────
+const scales = {};
+function selectScale(id, btn) {
+  document.querySelectorAll(`#scaleC1 .sbtn`).forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  scales[id] = btn.dataset.val;
+  updateProgress();
+}
+
+// ── OPTION INTERACTIONS ───────────────────────────────────────────────
+document.querySelectorAll('.opt input[type=radio], .opt input[type=checkbox]').forEach(inp => {
+  inp.addEventListener('change', function() {
+    if (this.type === 'radio') {
+      document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => r.closest('.opt').classList.remove('sel'));
+    }
+    this.closest('.opt').classList[this.checked ? 'add' : 'remove']('sel');
+    if (this.name === 'b3a') {
+      const val = document.querySelector('input[name="b3a"]:checked')?.value;
+      document.getElementById('q_b3a_oddeleni_wrap').style.display = (val === 'zamestnanci' || val === 'oba') ? 'block' : 'none';
+    }
+    if (this.name === 'e1') {
+      const e1val = document.querySelector('input[name="e1"]:checked')?.value;
+      document.getElementById('q_e1a_wrap').style.display = (e1val && e1val !== 'ne') ? 'block' : 'none';
+    }
+    if (this.name === 'c3') {
+      const show = !!document.querySelector('input[name="c3"][value="propusteni"]:checked');
+      document.getElementById('q_c4_wrap').style.display = show ? 'block' : 'none';
+    }
+    updateProgress();
+  });
+});
+
+// ── PROGRESS ──────────────────────────────────────────────────────────
+const REQ = ['a1','b1','c1','c3','d1','e1','e2'];
+function updateProgress() {
+  let done = 0;
+  if (document.getElementById('f_company').value.trim()) done++;
+  if (document.getElementById('f_role').value.trim()) done++;
+  REQ.forEach(f => {
+    if (f === 'c1') { if (scales.c1) done++; }
+    else if (document.querySelector(`input[name="${f}"]:checked`)) done++;
+  });
+  const total = 9;
+  document.getElementById('progFill').style.width = Math.round(done/total*100)+'%';
+  document.getElementById('progLabel').textContent = `${done} / ${total} povinných`;
+}
+document.getElementById('f_company').addEventListener('input', updateProgress);
+document.getElementById('f_role').addEventListener('input', updateProgress);
+
+// ── DATA ──────────────────────────────────────────────────────────────
+function load() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch(e) { return []; } }
+function save(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+
+// ── COUNTER ZE SHEETS ────────────────────────────────────────────────
+function loadCounter() {
+  fetch(SHEETS_URL)
+    .then(r => r.json())
+    .then(json => {
+      if (json.status === 'ok') {
+        document.getElementById('statTotal').textContent = json.total || 0;
+      }
+    })
+    .catch(() => {});
+}
+
+// ── VALIDATE ──────────────────────────────────────────────────────────
+function validate() {
+  let ok = true;
+  const clr = id => { const e=document.getElementById(id); if(e) e.classList.remove('show'); };
+  const err = id => { const e=document.getElementById(id); if(e) e.classList.add('show'); ok=false; };
+  ['err_company','err_role','err_a1','err_b1','err_c1','err_c3','err_d1','err_e1','err_e2','err_captcha'].forEach(clr);
+  if (!document.getElementById('f_company').value.trim()) err('err_company');
+  if (!document.getElementById('f_role').value.trim()) err('err_role');
+  if (!document.querySelector('input[name="a1"]:checked')) err('err_a1');
+  if (!document.querySelector('input[name="b1"]:checked')) err('err_b1');
+  if (!scales.c1) err('err_c1');
+  if (!document.querySelector('input[name="c3"]:checked')) err('err_c3');
+  if (!document.querySelector('input[name="d1"]:checked')) err('err_d1');
+  if (!document.querySelector('input[name="e1"]:checked')) err('err_e1');
+  if (!document.querySelector('input[name="e2"]:checked')) err('err_e2');
+  const cap = parseInt(document.getElementById('captchaIn').value);
+  if (isNaN(cap) || cap !== captchaAns) { err('err_captcha'); genCaptcha(); }
+  return ok;
+}
+
+// ── COLLECT ───────────────────────────────────────────────────────────
+function collect() {
+  const checked = name => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(i=>i.value);
+  const radio = name => document.querySelector(`input[name="${name}"]:checked`)?.value||null;
+  return {
+    ts: new Date().toISOString(),
+    company: document.getElementById('f_company').value.trim(),
+    role: document.getElementById('f_role').value.trim(),
+    a1: radio('a1'), a2: checked('a2'),
+    b1: radio('b1'), b2: checked('b2'), b2_other: document.getElementById('b2_other').value.trim(),
+    b3: checked('b3'),
+    b3a: radio('b3a'), b3a_odd: checked('b3a_odd'), b3a_other: document.getElementById('b3a_other')?.value.trim()||'',
+    b4: checked('b4'), b4_other: document.getElementById('b4_other').value.trim(),
+    c1: scales.c1||null,
+    c1a: radio('c1a'), c1b: radio('c1b'), c1c: radio('c1c'), c1d: radio('c1d'),
+    c2: document.getElementById('f_c2').value.trim(),
+    c3: checked('c3'),
+    c4_fte: document.getElementById('f_c4_fte').value.trim(),
+    c4_role: document.getElementById('f_c4_role').value.trim(),
+    c4_desc: document.getElementById('f_c4_desc').value.trim(),
+    d1: radio('d1'), d2: checked('d2'), d3: checked('d3'),
+    e1: radio('e1'), e1a: checked('e1a'), e1a_other: document.getElementById('e1a_other')?.value.trim()||'',
+    e2: radio('e2'), e3: document.getElementById('f_e3').value.trim(),
+  };
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyyeXBWZrTexw6zOTH-UZqtww0gb78g-AjUysz7cO_RP7kI-6UOyZQM-J5U9FNqbzEuAw/exec';
+
+document.getElementById('surveyForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (document.getElementById('hp_website').value) return;
+  if (!validate()) { document.querySelector('.errmsg.show')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  if (!checkRate()) { alert('Formulář byl právě odeslán. Počkejte prosím 30 sekund před dalším odesláním.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Odesílám…';
+
+  const payload = collect();
+
+  // Uložit lokálně
+  const all = load();
+  all.push(payload);
+  save(all);
+
+  // Odeslat do Google Sheets
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .catch(() => {})
+  .finally(() => {
+    this.style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+    document.getElementById('progFill').style.width = '100%';
+    document.getElementById('progLabel').textContent = 'Odesláno ✓';
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(loadCounter, 2000);
+  });
+});
+
+// ── EXPORT ────────────────────────────────────────────────────────────
+function exportData() {
+  const pwd = prompt('Zadejte heslo pro export dat:');
+  if (pwd !== 'ASWA2026') { alert('Nesprávné heslo.'); return; }
+  const blob = new Blob([JSON.stringify(load(),null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aswa_pruzkum_ai_2026.json';
+  a.click();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+loadCounter();
+updateProgress();
+</script>
+</body>
+</html>
